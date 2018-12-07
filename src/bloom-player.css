@@ -3,6 +3,15 @@
     background-color:thistle;
 }
 
+.bloomPlayer.bloomPlayer1 .pageSlider .contextPage .bloom-page {
+    margin-left: 10%;
+    width: 80%;
+    margin-top: 10%;
+    padding-top: calc(80% * 16 / 9); /* of width! */
+    opacity: 0.6;
+    background-color: darkgray;
+}
+
 .bloomPlayer.bloomPlayer1 .pageSlider .bloom-page {
     margin-left: 2%;
     width: 96%;

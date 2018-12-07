@@ -9,10 +9,12 @@ import "./bloom-player.css";
 
 interface IBloomPlayerProps {
     url: string; // of the bloom book
+    showContext?: string; // currently may be "no" or "yes"
 }
 interface IState {
     pages: Array<string>;
     styles: string;
+    currentIndex: number;
 }
 export default class BloomPlayer extends React.Component<
 IBloomPlayerProps,
@@ -20,7 +22,8 @@ IState
 > {
     public readonly state: IState = {
             pages: ["loading..."],
-            styles: ''
+            styles: '',
+            currentIndex: 0
     };
 
     //private rootElt : HTMLElement;
@@ -88,15 +91,35 @@ IState
         // It would be nice to use an ID but we don't want to assume there is
         // only one of these components on a page.";
         return <div className="bloomPlayer bloomPlayer1">
-            <style scoped>{this.state.styles}</style>
-            <Slider className="pageSlider">
-            {this.state.pages.map(function(slide) {
+            <Slider className="pageSlider" 
+                slidesToShow={(this.props.showContext === "yes" ? 3 : 1)}
+                infinite={false}
+                dots={true}
+                afterChange={index => this.setIndex(index)}>
+            {this.state.pages.map((slide, index) => {
             return (
-              <div key={slide} dangerouslySetInnerHTML={{__html:slide}}>
+                <div key={slide}  className={this.getItemClass(index)}>
+                    <style scoped>{this.state.styles}</style>
+                    <div dangerouslySetInnerHTML={{__html:slide}}>
+              </div>
               </div>
             );
           })}
             </Slider>
         </div>;
+    }
+
+    private getItemClass(itemIndex: number): string {
+        if (this.props.showContext !== "yes") {
+            return "";
+        }
+        if (itemIndex === this.state.currentIndex || itemIndex === this.state.currentIndex + 2) {
+            return "contextPage";
+        }
+        return "";
+    }
+
+    private setIndex(index: number) {
+        this.setState({currentIndex: index});
     }
 }
