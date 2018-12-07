@@ -1,23 +1,29 @@
 import * as React from 'react';
 import axios from 'axios';
 import Slider from "react-slick";
-import "~slick-carousel/slick/slick.css";
-import "~slick-carousel/slick/slick-theme.css";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import "../node_modules/style-scoped/scoped.js"; // maybe use .min.js after debugging?
+import "./bloom-player.css";
 //import * as ReactDOM from "react-dom";
 
 interface IBloomPlayerProps {
     url: string; // of the bloom book
 }
 interface IState {
-    pages: string;
+    pages: Array<string>;
+    styles: string;
 }
 export default class BloomPlayer extends React.Component<
 IBloomPlayerProps,
 IState
 > {
     public readonly state: IState = {
-        pages: "<div>loading...</div>"
+            pages: ["loading..."],
+            styles: ''
     };
+
+    //private rootElt : HTMLElement;
 
     public componentDidMount() {
         var index = this.props.url.lastIndexOf("/");
@@ -27,21 +33,61 @@ IState
             var doc = document.createElement('html');
             doc.innerHTML = result.data;
             var pages = doc.getElementsByClassName("bloom-page");
-            var sliderContent = "";
+            var sliderContent = [];
             for (var i = 0; i < pages.length; i++) {
-                var page = pages[i];
-                var content = page.getElementsByClassName("marginBox")[0];
-                sliderContent += content.outerHTML;
+                const page = pages[i];
+                const content = page; //page.getElementsByClassName("marginBox")[0];
+                const srcElts = document.evaluate(".//*[@src]", content, null,XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+                for (var j = 0; j < srcElts.snapshotLength; j++) {
+                    const item = srcElts.snapshotItem(j) as HTMLElement;
+                    if (!item) {
+                        continue;
+                    }
+                    const srcName = item.getAttribute("src");
+                    const srcPath = this.props.url + "/" + srcName;
+                    item.setAttribute("src", srcPath);
+                }
+                sliderContent.push(content.outerHTML);
             }
+            const linkElts = document.evaluate(".//link[@href and @type='text/css']", doc, null,XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+            const promises = [];
+            for (let i = 0; i < linkElts.snapshotLength; i++) {
+                const link = linkElts.snapshotItem(i) as HTMLElement;
+                const href = link.getAttribute("href");
+                const fullHref = this.fullUrl(href);
+                promises.push(axios.get(fullHref));
+            }
+            axios.all(promises.map(p => p.catch(()=> undefined))).then(results => {
+                let combinedStyle = "";
+                results.forEach(result => {
+                    if (result && result.data) {
+                        combinedStyle += result.data;}
+                 });
+                this.setState({styles: combinedStyle});
+            })
             this.setState({pages: sliderContent});
         })
+
     }
 
+    private fullUrl(url: string | null) : string {
+        // Enhance: possibly we should only do this if we determine it is a relative URL?
+        return this.props.url + "/" + url;
+    }
+
+
+    // ref={renderedElement => (this.rootElt = renderedElement as HTMLElement)}
     public render() {
-        return <div>
-            <Slider >
-                <div>1</div>
-                <div>2</div>
+        //var temp = "<div>1</div><div>2</div>";
+        return <div >
+            <style scoped>{this.state.styles}</style>
+            <Slider className="pageSlider">
+            {this.state.pages.map(function(slide) {
+            return (
+              <div key={slide} dangerouslySetInnerHTML={{__html:slide}}>
+              </div>
+            );
+          })}
             </Slider>
         </div>;
     }
