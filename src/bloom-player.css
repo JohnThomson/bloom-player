@@ -1,3 +1,25 @@
 .pageSlider {
     counter-reset: pageNumber;
+    background-color:thistle;
+}
+
+.bloomPlayer.bloomPlayer1 .pageSlider .bloom-page {
+    margin-left: 2%;
+    width: 96%;
+    margin-top: 2%;
+    padding-top: calc(96% * 16 / 9); /* of width! */
+    max-width: initial;
+    min-width: initial;
+    max-height: initial;
+    min-height: initial;
+}
+
+/* Here we need a specificity of better than 0,0,4,0 to beat the rules
+that usually set the size and position of marginBox.*/
+.bloomPlayer.bloomPlayer1 .pageSlider .bloom-page .marginBox {
+    width: 90%;
+    height: 90%;
+    position: absolute; /* inside massive padding that sets height of page */
+    top: 5%;
+    left: 5%;
 }

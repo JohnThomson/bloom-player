@@ -59,6 +59,11 @@ IState
             }
             axios.all(promises.map(p => p.catch(()=> undefined))).then(results => {
                 let combinedStyle = "";
+                const styleElts = document.evaluate(".//style[@type='text/css']", doc, null,XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+                for (let k = 0; k < styleElts.snapshotLength; k++) {
+                    const styleElt = styleElts.snapshotItem(k) as HTMLElement;
+                    combinedStyle += styleElt.innerText;
+                }
                 results.forEach(result => {
                     if (result && result.data) {
                         combinedStyle += result.data;}
@@ -78,8 +83,11 @@ IState
 
     // ref={renderedElement => (this.rootElt = renderedElement as HTMLElement)}
     public render() {
-        //var temp = "<div>1</div><div>2</div>";
-        return <div >
+        // multiple classes help make rules more specific than those in the book's stylesheet
+        // (which benefit from an extra attribute item like __scoped_N)
+        // It would be nice to use an ID but we don't want to assume there is
+        // only one of these components on a page.";
+        return <div className="bloomPlayer bloomPlayer1">
             <style scoped>{this.state.styles}</style>
             <Slider className="pageSlider">
             {this.state.pages.map(function(slide) {
