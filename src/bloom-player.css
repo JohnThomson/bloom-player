@@ -1,3 +1,9 @@
+/* These rules mostly tweak fixed print layouts, currently enforcing 16x9 layout,
+like Bloom Reader, and overriding rules, mainly from previewMode.css, that we don't
+want in this control.
+Much of it could go away if we exclude previewMode.css, or if we end up with a server
+process which produces an htm file in the Bloom Reader state, or if we re-architect so
+there is some simple way like a root class to toggle a book's appearance to BR mode.*/
 .pageSlider {
     counter-reset: pageNumber;
     background-color:thistle;
@@ -46,4 +52,25 @@ to separate the pages in a continuous scrolling view. Unfortunately that rule is
 !important so the only way to beat it is to be !important too. */
 .bloomPlayer.bloomPlayer1 DIV.bloom-page {
     border-bottom: initial !important;
+}
+
+/* we're giving pages in this control less margin than in regular previews,
+so we need the page number further down to reduce the chance of overlap. */
+.bloomPlayer.bloomPlayer1 .numberedPage::after {
+    bottom: 2px;
+}
+
+/* the reduced margin means we need to adjust the horizontal position to
+align the page number with the margin, too. */
+.bloomPlayer.bloomPlayer1 .numberedPage:nth-of-type(2n+1)::after {
+    left: 5%;
+}
+
+/* logically we would need this to override the rule for right pages,
+but actually in this control the pages don't have a common direct parent,
+so nth-of-type doesn't do what we want and all the pages come out as left.
+Not trying to solve this for now as we may want an architectural solution
+that makes available to the control files more like Bloom Reader uses */
+.bloomPlayer.bloomPlayer1 .numberedPage:nth-of-type(2n)::after {
+    right: 5%;
 }
