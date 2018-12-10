@@ -32,3 +32,8 @@ that usually set the size and position of marginBox.*/
     top: 5%;
     left: 5%;
 }
+
+.bloomPlayer .slick-dots {
+    position: relative;
+    bottom: initial;
+}
