@@ -38,8 +38,15 @@ IState
         var filename = this.props.url.substring(index + 1); // enhance: no slash??
         var htmUrl = this.props.url + "/" + filename + ".htm"; // enhance: search directory if name doesn't match?
         axios.get(htmUrl).then(result => {
-            var doc = document.createElement('html');
+            const doc = document.createElement('html');
             doc.innerHTML = result.data;
+
+            // This is a preview, it's distracting to have it be editable.
+            const editable = document.evaluate(".//*[@contenteditable]", doc, null,XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+            for (let iedit = 0; iedit < editable.snapshotLength; iedit++) {
+                (editable.snapshotItem(iedit) as HTMLElement).removeAttribute("contenteditable");
+            }
+
             var pages = doc.getElementsByClassName("bloom-page");
             var sliderContent = [];
             if (this.shouldShow3Pages()) {
