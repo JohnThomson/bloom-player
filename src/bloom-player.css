@@ -6,7 +6,6 @@ process which produces an htm file in the Bloom Reader state, or if we re-archit
 there is some simple way like a root class to toggle a book's appearance to BR mode.*/
 .pageSlider {
     counter-reset: pageNumber;
-    background-color:thistle;
 }
 
 .bloomPlayer.bloomPlayer1 .pageSlider .contextPage .bloom-page {
