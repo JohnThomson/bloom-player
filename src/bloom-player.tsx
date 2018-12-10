@@ -28,6 +28,11 @@ IState
 
     //private rootElt : HTMLElement;
 
+    private shouldShow3Pages(): boolean {
+        // enhance: this may acquire a third state in which it responds to width.
+        return this.props.showContext === "yes";
+    }
+
     public componentDidMount() {
         var index = this.props.url.lastIndexOf("/");
         var filename = this.props.url.substring(index + 1); // enhance: no slash??
@@ -37,6 +42,9 @@ IState
             doc.innerHTML = result.data;
             var pages = doc.getElementsByClassName("bloom-page");
             var sliderContent = [];
+            if (this.shouldShow3Pages()) {
+                sliderContent.push(""); // blank page to fill the space left of first.
+            }
             for (var i = 0; i < pages.length; i++) {
                 const page = pages[i];
                 const content = page; //page.getElementsByClassName("marginBox")[0];
@@ -51,6 +59,9 @@ IState
                     item.setAttribute("src", srcPath);
                 }
                 sliderContent.push(content.outerHTML);
+            }
+            if (this.shouldShow3Pages()) {
+                sliderContent.push(""); // blank page to fill the space right of last.
             }
             const linkElts = document.evaluate(".//link[@href and @type='text/css']", doc, null,XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
             const promises = [];
@@ -92,7 +103,7 @@ IState
         // only one of these components on a page.";
         return <div className="bloomPlayer bloomPlayer1">
             <Slider className="pageSlider" 
-                slidesToShow={(this.props.showContext === "yes" ? 3 : 1)}
+                slidesToShow={(this.shouldShow3Pages() ? 3 : 1)}
                 infinite={false}
                 dots={true}
                 afterChange={index => this.setIndex(index)}>
@@ -110,7 +121,7 @@ IState
     }
 
     private getItemClass(itemIndex: number): string {
-        if (this.props.showContext !== "yes") {
+        if (!this.shouldShow3Pages()) {
             return "";
         }
         if (itemIndex === this.state.currentIndex || itemIndex === this.state.currentIndex + 2) {
