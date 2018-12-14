@@ -4,10 +4,15 @@ want in this control.
 Much of it could go away if we exclude previewMode.css, or if we end up with a server
 process which produces an htm file in the Bloom Reader state, or if we re-architect so
 there is some simple way like a root class to toggle a book's appearance to BR mode.*/
+
+/* The rules in the book reset this counter at the body level, but since we scope our
+rules to apply at a body level, that rule doesn't work. We need to reset at a level
+above the page so that page numbers will increment.*/
 .pageSlider {
     counter-reset: pageNumber;
 }
 
+/* makes context pages smaller than regular ones */
 .bloomPlayer.bloomPlayer1 .pageSlider .contextPage .bloom-page {
     margin-left: 10%;
     width: 80%;
@@ -17,6 +22,10 @@ there is some simple way like a root class to toggle a book's appearance to BR m
     background-color: darkgray;
 }
 
+/* Forces 16x9 aspect ratio indented slightly from control margins. A trick
+makes use of the fact that padding height percents are calculated from the
+page WIDTH. The page is all padding; a later rule overlays the margin box
+on top of the padding. */
 .bloomPlayer.bloomPlayer1 .pageSlider .bloom-page {
     margin-left: 2%;
     width: 96%;
@@ -68,7 +77,7 @@ align the page number with the margin, too. */
 /* logically we would need this to override the rule for right pages,
 but actually in this control the pages don't have a common direct parent,
 so nth-of-type doesn't do what we want and all the pages come out as left.
-Not trying to solve this for now as we may want an architectural solution
+Not trying to solve this for now as we want an architectural solution
 that makes available to the control files more like Bloom Reader uses */
 .bloomPlayer.bloomPlayer1 .numberedPage:nth-of-type(2n)::after {
     right: 5%;
