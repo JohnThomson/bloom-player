@@ -1,5 +1,5 @@
 'use strict';
-
+// remember most things need changing in webpack.config.prod.js
 const fs = require('fs');
 const path = require('path');
 const resolve = require('resolve');

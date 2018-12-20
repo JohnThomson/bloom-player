@@ -349,7 +349,11 @@ module.exports = {
             exclude: cssModuleRegex,
             loader: getStyleLoaders({
               importLoaders: 1,
-              modules: true,
+              // original file generated from create react app eject has true.
+              // this mangles names in css but doesn't change them in jsx, with disastrous results
+              // quite possibly using false here means we can't use modules at all,
+              // and the rules below for .modules.css had better not apply to anything.
+              modules: false,
               sourceMap: shouldUseSourceMap,
             }),
             // Don't consider CSS imports dead code even if the
@@ -360,6 +364,8 @@ module.exports = {
           },
           // Adds support for CSS Modules (https://github.com/css-modules/css-modules)
           // using the extension .module.css
+          // Note: don't have any of these; doesn't seem to be compatible with tsx or something??
+          // See comment on modules: false above.
           {
             test: cssModuleRegex,
             loader: getStyleLoaders({
