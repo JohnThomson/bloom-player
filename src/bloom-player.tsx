@@ -125,6 +125,8 @@ IState
         return  this.sourceUrl + "/" + url;
     }
 
+    private slider: Slider | null;
+
     public render() {
         // multiple classes help make rules more specific than those in the book's stylesheet
         // (which benefit from an extra attribute item like __scoped_N)
@@ -132,6 +134,7 @@ IState
         // only one of these components on a page.";
         return <div className="bloomPlayer bloomPlayer1">
             <Slider className="pageSlider" 
+                ref={slider => this.slider = slider}
                 slidesToShow={(this.shouldShow3Pages() ? 3 : 1)}
                 infinite={false}
                 dots={true}
@@ -140,7 +143,8 @@ IState
                     return (
                         <div key={slide}  className={this.getSlideClass(index)}>
                             <style scoped>{this.state.styles}</style>
-                            <div dangerouslySetInnerHTML={{__html:slide}}>
+                            <div dangerouslySetInnerHTML={{__html:slide}}
+                            onClick={() => this.slider!.slickGoTo(index - 1)}>
                     </div>
                     </div>
                     );
