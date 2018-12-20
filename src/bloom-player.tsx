@@ -33,15 +33,23 @@ IState
             currentIndex: 0
     };
 
+    private sourceUrl: string;
+
     private shouldShow3Pages(): boolean {
         // enhance: this may acquire a third state in which it responds to width.
         return this.props.showContext === "yes";
     }
 
     public componentDidMount() {
-        var index = this.props.url.lastIndexOf("/");
-        var filename = this.props.url.substring(index + 1);
-        var htmUrl = this.props.url + "/" + filename + ".htm"; // enhance: search directory if name doesn't match?
+        this.sourceUrl = this.props.url;
+        // Folder urls often (but not always) end in /. If so, remove it, so we don't get
+        // an empty filename or double-slashes in derived URLs.
+        if (this.sourceUrl.endsWith("/")) {
+            this.sourceUrl =  this.sourceUrl.substring(0,  this.sourceUrl.length - 1);
+        }
+        var index =  this.sourceUrl.lastIndexOf("/");
+        var filename =  this.sourceUrl.substring(index + 1);
+        var htmUrl =  this.sourceUrl + "/" + filename + ".htm"; // enhance: search directory if name doesn't match?
         axios.get(htmUrl).then(result => {
             const doc = document.createElement('html');
             doc.innerHTML = result.data;
@@ -70,7 +78,7 @@ IState
                         continue;
                     }
                     const srcName = item.getAttribute("src");
-                    const srcPath = this.props.url + "/" + srcName;
+                    const srcPath = this.fullUrl(srcName);
                     item.setAttribute("src", srcPath);
                 }
                 sliderContent.push(content.outerHTML);
@@ -114,7 +122,7 @@ IState
 
     private fullUrl(url: string | null) : string {
         // Enhance: possibly we should only do this if we determine it is a relative URL?
-        return this.props.url + "/" + url;
+        return  this.sourceUrl + "/" + url;
     }
 
     public render() {
