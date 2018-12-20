@@ -35,6 +35,9 @@ on top of the padding. */
     min-width: initial;
     max-height: initial;
     min-height: initial;
+    /* All the properties used in the contextPage rule; we want the transition both
+    when we add that class and when we remove it */
+    transition: width 0.5s, margin-left 0.5s, margin-top 0.5s, padding-top 0.5s, opacity 0.5s, background-color 0.5s;
 }
 
 /* Here we need a specificity of better than 0,0,4,0 to beat the rules

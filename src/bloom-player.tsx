@@ -135,7 +135,7 @@ IState
                 slidesToShow={(this.shouldShow3Pages() ? 3 : 1)}
                 infinite={false}
                 dots={true}
-                afterChange={index => this.setIndex(index)}>
+                beforeChange={(current, next) => this.setIndex(next) }>
                 {this.state.pages.map((slide, index) => {
                     return (
                         <div key={slide}  className={this.getSlideClass(index)}>
