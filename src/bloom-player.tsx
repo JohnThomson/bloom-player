@@ -16,6 +16,7 @@ import Narration from "./narration";
 interface IBloomPlayerProps {
     url: string; // of the bloom book (folder)
     showContext?: string; // currently may be "no" or "yes"
+    paused?: boolean;
 }
 interface IState {
     pages: Array<string>; // of the book. First and last are empty in context mode.
@@ -128,6 +129,14 @@ IState
 
     }
 
+    componentDidUpdate() {
+        if (this.props.paused) {
+            Narration.pause();
+        } else {
+            Narration.play();
+        }
+    }
+
     private fullUrl(url: string | null) : string {
         // Enhance: possibly we should only do this if we determine it is a relative URL?
         return  this.sourceUrl + "/" + url;
@@ -189,6 +198,7 @@ IState
         if (!bloomPage) {
             return; // blank initial or final page?
         }
+        Narration.computeDuration(bloomPage);
         Narration.playAllSentences(bloomPage);
     }
 }

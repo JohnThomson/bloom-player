@@ -2,6 +2,7 @@ import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 //import { action } from '@storybook/addon-actions';
 import BloomPlayer from '../src/bloom-player';
+import BloomPlayerControls from "../src/bloom-player-controls";
 
 const stories = storiesOf('BloomPlayer', module);
 
@@ -24,7 +25,7 @@ stories.add(
 stories.add(
   'motion book widows gift',
   () => <div style={{backgroundColor:"thistle"}}>
-      <BloomPlayer
+      <BloomPlayerControls
       showContext="yes"
       url="https://s3.amazonaws.com/BloomLibraryBooks-Sandbox/bloom.bible.stories%40gmail.com/8bb123d6-7ab8-43a4-8863-2b39b7e1d013/003+Widow’s+Gift"/>
     </div>,
