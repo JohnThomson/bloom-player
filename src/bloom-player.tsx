@@ -5,6 +5,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "../node_modules/style-scoped/scoped.js"; // maybe use .min.js after debugging?
 import "./bloom-player.css";
+import Narration from "./narration";
 
 // BloomPlayer takes the URL of a folder containing a Bloom book. The file name
 // is expected to match the folder name.
@@ -47,6 +48,7 @@ IState
         if (this.sourceUrl.endsWith("/")) {
             this.sourceUrl =  this.sourceUrl.substring(0,  this.sourceUrl.length - 1);
         }
+        Narration.urlPrefix = this.sourceUrl;
         var index =  this.sourceUrl.lastIndexOf("/");
         var filename =  this.sourceUrl.substring(index + 1);
         var htmUrl =  this.sourceUrl + "/" + filename + ".htm"; // enhance: search directory if name doesn't match?
@@ -116,6 +118,12 @@ IState
                 this.setState({styles: combinedStyle});
             })
             this.setState({pages: sliderContent});
+            // A pause hopefully allows the document to become visible before we
+            // start playing the first page. Also gives time for the first page
+            // element to actually get created in the document.
+            // Note: typically in Chrome we won't actually start playing, because
+            // of a rule that the user must interact with the document first.
+            window.setTimeout(() => this.showingPage(0), 500);
         })
 
     }
@@ -138,7 +146,8 @@ IState
                 slidesToShow={(this.shouldShow3Pages() ? 3 : 1)}
                 infinite={false}
                 dots={true}
-                beforeChange={(current, next) => this.setIndex(next) }>
+                beforeChange={(current, next) => this.setIndex(next) }
+                afterChange={(current) => this.showingPage(current)}>
                 {this.state.pages.map((slide, index) => {
                     return (
                         <div key={slide}  className={this.getSlideClass(index)}>
@@ -165,7 +174,21 @@ IState
         return "";
     }
 
+    // Called from beforeChange, sets up context classes
     private setIndex(index: number) {
         this.setState({currentIndex: index});
+    }
+
+    // Called from afterChange, starts narration, etc.
+    private showingPage(index: number):void {
+        var sliderPage = document.querySelectorAll(".slick-slide[data-index='" + (index + 1) + "'")[0] as HTMLElement;
+        if (!sliderPage) {
+            return; // unexpected
+        }
+        var bloomPage = sliderPage.getElementsByClassName("bloom-page")[0] as HTMLElement;
+        if (!bloomPage) {
+            return; // blank initial or final page?
+        }
+        Narration.playAllSentences(bloomPage);
     }
 }

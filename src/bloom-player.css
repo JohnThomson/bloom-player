@@ -50,6 +50,10 @@ that usually set the size and position of marginBox.*/
     left: 5%;
 }
 
+.ui-audioCurrent {
+    background-color: yellow;
+}
+
 /* the default positioning of these dots is inside the page area, but our pages overlap them.
 Also, if there are more than will fit on a line, some drop outside the control altogether.
 We just make them follow the main content normally. */

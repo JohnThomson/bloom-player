@@ -21,3 +21,12 @@ stories.add(
     </div>,
   { info: { inline: true } }
 );
+stories.add(
+  'motion book widows gift',
+  () => <div style={{backgroundColor:"thistle"}}>
+      <BloomPlayer
+      showContext="yes"
+      url="https://s3.amazonaws.com/BloomLibraryBooks-Sandbox/bloom.bible.stories%40gmail.com/8bb123d6-7ab8-43a4-8863-2b39b7e1d013/003+Widow’s+Gift"/>
+    </div>,
+  { info: { inline: true } }
+);
